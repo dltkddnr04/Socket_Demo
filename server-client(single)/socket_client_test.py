@@ -2,7 +2,7 @@ from socket import *
 import threading
 
 # get ip from dns
-server_ip = gethostbyname('leestudio.iptime.org')
+server_ip = gethostbyname('127.0.0.1')
 server_port = 18650
 
 def command_check(command, type):

@@ -2,7 +2,7 @@ from socket import *
 
 server_socket = socket(AF_INET, SOCK_STREAM)
 server_socket.bind(('', 18650))
-server_socket.listen(1)
+server_socket.listen(16)
 
 def connection():
     connection_socket, address = server_socket.accept()
