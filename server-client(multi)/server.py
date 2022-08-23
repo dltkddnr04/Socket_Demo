@@ -14,8 +14,6 @@ def console_print(type, message):
     print('[{}][{}] {}'.format(time, type, message))
 
 def connection(connection_socket, address):
-    console_print('info', 'Connected by {}'.format(address))
-
     while True:
         try:
             receive_data = connection_socket.recv(1024)
@@ -39,10 +37,10 @@ def connection(connection_socket, address):
     connection_socket.close()
 
 console_print('info', 'server started')
+console_print('info', 'waiting for connection')
+
 try:
     while True:
-        console_print('info', 'waiting for connection')
-
         connection_socket, address = server_socket.accept()
         client_list.append(connection_socket)
         threading.Thread(target=connection, args=(connection_socket, address)).start()
