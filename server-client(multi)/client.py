@@ -18,7 +18,7 @@ def send(socket):
         socket.sendall(new_send_data)
         if input_data == 'exit':
             socket.close()
-            break
+            return
 
 def receive(socket):
     while True:
@@ -29,7 +29,7 @@ def receive(socket):
             #print(receive_data.decode('utf-8'))
         
         except:
-            break
+            return
 
 client_socket = socket(AF_INET, SOCK_STREAM)
 client_socket.connect((server_ip, server_port))
