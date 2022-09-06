@@ -1,6 +1,7 @@
 from socket import *
 from datetime import datetime
 import threading
+import pickle
 
 # make multi thread based socket echo server
 server_socket = socket(AF_INET, SOCK_STREAM)
@@ -22,14 +23,16 @@ def connection(connection_socket, address):
                 console_print('info', 'Disconnected by {}'.format(address))
                 break
 
-            console_print('receive', '{} : {}'.format(address[0], receive_data.decode('utf-8')))
+            processed_receive_data = pickle.loads(receive_data)
+            console_print('receive', '{} : {}'.format(processed_receive_data[0], processed_receive_data[1]))
             for client in client_list:
                 if client != connection_socket:
                     client.send(receive_data)
 
         except:
-            console_print('info', 'Disconnected by {}'.format(address))
-            break
+            #console_print('info', 'Disconnected by {}'.format(address))
+            #break
+            pass
 
     if client in client_list:
         client_list.remove(client)
