@@ -16,15 +16,20 @@ def send(socket):
         send_data = [user_nick_name, input_data]
         new_send_data = pickle.dumps(send_data)
         socket.sendall(new_send_data)
-        if send_data[1] == 'exit':
+        if input_data == 'exit':
+            socket.close()
             break
 
 def receive(socket):
     while True:
-        receive_data = socket.recv(8192)
-        receive_data = pickle.loads(receive_data)
-        print("{}: {}".format(receive_data[0], receive_data[1]))
-        #print(receive_data.decode('utf-8'))
+        try:
+            receive_data = socket.recv(8192)
+            receive_data = pickle.loads(receive_data)
+            print("{}: {}".format(receive_data[0], receive_data[1]))
+            #print(receive_data.decode('utf-8'))
+        
+        except:
+            break
 
 client_socket = socket(AF_INET, SOCK_STREAM)
 client_socket.connect((server_ip, server_port))
