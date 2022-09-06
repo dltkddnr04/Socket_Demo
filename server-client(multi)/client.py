@@ -14,7 +14,7 @@ def send(socket):
 
 def receive(socket):
     while True:
-        receive_data = socket.recv(1024)
+        receive_data = socket.recv(8192)
         receive_data = receive_data.decode('utf-8')
         print('상대: ' + receive_data)
 

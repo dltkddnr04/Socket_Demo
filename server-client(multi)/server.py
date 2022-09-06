@@ -16,7 +16,7 @@ def console_print(type, message):
 def connection(connection_socket, address):
     while True:
         try:
-            receive_data = connection_socket.recv(1024)
+            receive_data = connection_socket.recv(8192)
 
             if not receive_data:
                 console_print('info', 'Disconnected by {}'.format(address))
