@@ -27,21 +27,53 @@ def stun_server_connect(server_ip, server_port):
 
     send_data = [user_nick_name, get_local_ip()]
     stun_server_socket.sendall(pickle.dumps(send_data))
+
     receive_data = stun_server_socket.recv(8192)
     receive_data = pickle.loads(receive_data)
-    
+    user_list = receive_data
+    print(user_list)
     
     while True:
         try:
             receive_data = stun_server_socket.recv(8192)
             receive_data = pickle.loads(receive_data)
+            user_list.append(receive_data)
+            print(user_list)
 
         except:
             pass
 
-def peer_to_peer_connection_start(client_list):
-    pass
+def peer_to_peer_connection_start():
+    while True:
+        try:
+            for user in user_list:
+                if user not in connected_user_list and user[1] != get_local_ip():
+                    peer_to_peer_socket = socket(AF_INET, SOCK_STREAM)
+                    try:
+                        peer_to_peer_socket.connect((user[1], 18651))
+                        connected_user_list.append(user)
+                        #threading.Thread(target=connection, args=(peer_to_peer_socket)).start()
+                        print('connected to {} using local ip'.format(user[0]))
+                    except:
+                        try:
+                            peer_to_peer_socket.connect((user[2], 18651))
+                            connected_user_list.append(user)
+                            #threading.Thread(target=connection, args=(peer_to_peer_socket)).start()
+                            print('connected to {} using public ip'.format(user[0]))
+                        except:
+                            print('연결 실패')
+        except:
+            pass
 
+
+def connection(peer_to_peer_socket):
+    while True:
+        try:
+            send_data = [user_nick_name, input()]
+            peer_to_peer_socket.sendall(pickle.dumps(send_data))
+
+        except:
+            pass
 
 def send(socket, data):
     while True:
@@ -56,13 +88,7 @@ def receive(socket):
         receive_data = socket.recv(8192)
         receive_data = pickle.loads(receive_data)
         print("{}: {}".format(receive_data[0], receive_data[1]))
-        #print(receive_data.decode('utf-8'))
-
-#client_socket = socket(AF_INET, SOCK_STREAM)
-#client_socket.connect((server_ip, server_port))
-
-#threading.Thread(target=receive, args=(client_socket,)).start()
-#threading.Thread(target=send, args=(client_socket,)).start()
 
 # connect with stun server
 threading.Thread(target=stun_server_connect, args=(server_ip, server_port)).start()
+threading.Thread(target=peer_to_peer_connection_start, args=()).start()
