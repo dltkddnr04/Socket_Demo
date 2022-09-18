@@ -2,9 +2,10 @@ from socket import *
 from datetime import datetime
 import threading
 import pickle
+import time
 
 # get ip from dns
-server_ip = gethostbyname('127.0.0.1')
+server_ip = gethostbyname('10.0.0.116')
 server_port = 18650
 
 user_nick_name = None
@@ -22,17 +23,23 @@ def get_local_ip():
     return local_ip
 
 def stun_server_connect(server_ip, server_port):
+    # connect to stun server
     stun_server_socket = socket(AF_INET, SOCK_STREAM)
     stun_server_socket.connect((server_ip, server_port))
 
+    # send user nick name, local ip
     send_data = [user_nick_name, get_local_ip()]
     stun_server_socket.sendall(pickle.dumps(send_data))
 
+    # receive user list from stun server
     receive_data = stun_server_socket.recv(8192)
     receive_data = pickle.loads(receive_data)
     user_list = receive_data
     print(user_list)
+
+    threading.Thread(target=peer_to_peer_connection_start, args=()).start()
     
+    # recieve additional user connectivity information
     while True:
         try:
             receive_data = stun_server_socket.recv(8192)
@@ -49,14 +56,15 @@ def peer_to_peer_connection_start():
             for user in user_list:
                 if user not in connected_user_list and user[1] != get_local_ip():
                     peer_to_peer_socket = socket(AF_INET, SOCK_STREAM)
+                    peer_to_peer_socket.bind(('', 18650))
                     try:
-                        peer_to_peer_socket.connect((user[1], 18651))
+                        peer_to_peer_socket.connect((user[1], 18650))
                         connected_user_list.append(user)
                         #threading.Thread(target=connection, args=(peer_to_peer_socket)).start()
                         print('connected to {} using local ip'.format(user[0]))
                     except:
                         try:
-                            peer_to_peer_socket.connect((user[2], 18651))
+                            peer_to_peer_socket.connect((user[2], 18650))
                             connected_user_list.append(user)
                             #threading.Thread(target=connection, args=(peer_to_peer_socket)).start()
                             print('connected to {} using public ip'.format(user[0]))
@@ -91,4 +99,3 @@ def receive(socket):
 
 # connect with stun server
 threading.Thread(target=stun_server_connect, args=(server_ip, server_port)).start()
-threading.Thread(target=peer_to_peer_connection_start, args=()).start()

@@ -1,8 +1,8 @@
 from socket import *
 import threading
 
-server_ip = '127.0.0.1'
-server_port = 18650
+opponent_user_ip = '10.0.0.21'
+opponent_user_port = 18651
 
 def receive_data(socket):
     while True:
@@ -18,7 +18,12 @@ def send_data(socket):
             exit()
 
 client_socket = socket(AF_INET, SOCK_STREAM)
-client_socket.connect((server_ip, server_port))
-
-threading.Thread(target=receive_data, args=(client_socket,)).start()
-threading.Thread(target=send_data, args=(client_socket,)).start()
+client_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+client_socket.bind(('', 18651))
+for i in range(5):
+    try:
+        client_socket.connect((opponent_user_ip, opponent_user_port))
+        threading.Thread(target=receive_data, args=(client_socket,)).start()
+        threading.Thread(target=send_data, args=(client_socket,)).start()
+    except:
+        continue
