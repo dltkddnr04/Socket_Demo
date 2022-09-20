@@ -19,7 +19,7 @@ def send_data(socket):
 
 client_socket = socket(AF_INET, SOCK_STREAM)
 client_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-client_socket.bind(('', 18651))
+client_socket.bind(('', opponent_user_port))
 for i in range(5):
     try:
         client_socket.connect((opponent_user_ip, opponent_user_port))
