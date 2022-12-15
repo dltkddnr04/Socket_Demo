@@ -1,6 +1,7 @@
 import socket
 import selectors
 import datetime
+import json
 
 sel = selectors.DefaultSelector()
 
@@ -18,7 +19,10 @@ def read(conn, mask):
     peer_name = conn.getpeername()
     if data:
         data = data.decode()
-        console_print('[received] {}: {}'.format(peer_name, data))
+        json_data = json.loads(data)
+        nickname = json_data["nick"]
+        message = json_data["message"]
+        console_print('[received] {}: {}'.format(nickname, message))
 
         if data == 'exit':
             sel.unregister(conn)
