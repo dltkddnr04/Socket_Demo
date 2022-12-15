@@ -26,18 +26,18 @@ class MyApp(qtwid.QWidget):
 
     def recive_message(self, server_socket):
         while True:
-            #try:
-            recived_message = server_socket.recv(8192)
-            recived_message = recived_message.decode()
-            recived_message = json.loads(recived_message)
-            if recived_message != b'':
-                if recived_message["nick"] != self.nickname:
-                    self.console_print("recived", recived_message["nick"], recived_message["message"])
-            else:
+            try:
+                recived_message = server_socket.recv(8192)
+                recived_message = recived_message.decode()
+                recived_message = json.loads(recived_message)
+                if recived_message != b'':
+                    if recived_message["nick"] != self.nickname:
+                        self.console_print(msg_type='recived', nick=recived_message["nick"], msg=recived_message["message"])
+                else:
+                    pass
+            
+            except:
                 pass
-
-            #except:
-            #    print("something")
 
     def console_print(self, msg_type, nick, msg):
         now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -79,7 +79,6 @@ class MyApp(qtwid.QWidget):
                 self.nickname = args[1]
                 message = '닉네임을 {}(으)로 변경했습니다.'.format(self.nickname)
             elif command_type == 'exit':
-                # exit command
                 message = '클라이언트를 종료합니다.'
 
         else:
