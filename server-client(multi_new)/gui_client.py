@@ -60,7 +60,7 @@ class MyApp(qtwid.QWidget):
 
         self.setLayout(grid)
 
-        self.setWindowTitle('Pizza Network Client')
+        self.setWindowTitle('Chat demo client')
         self.resize(600, 400)
         self.show()
 

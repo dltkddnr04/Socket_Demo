@@ -41,7 +41,7 @@ def read(conn, mask):
 
 sock = socket.socket()
 sock.bind(('', 4040))
-sock.listen(100)
+sock.listen()
 sock.setblocking(False)
 sel.register(sock, selectors.EVENT_READ, accept)
 
