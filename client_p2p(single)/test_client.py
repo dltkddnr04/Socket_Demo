@@ -58,9 +58,13 @@ def server_connection():
     p2p_socket = socket(AF_INET, SOCK_STREAM)
     p2p_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     p2p_socket.bind(('', P2P_PORT))
-    p2p_socket.connect((osc_ip, P2P_PORT))
-    threading.Thread(target=sock_send, args=(p2p_socket,)).start()
-    threading.Thread(target=sock_recv, args=(p2p_socket,)).start()
+    for i in range(10):
+        try:
+            p2p_socket.connect((osc_ip, P2P_PORT))
+            threading.Thread(target=sock_send, args=(p2p_socket,)).start()
+            threading.Thread(target=sock_recv, args=(p2p_socket,)).start()
+        except:
+            continue
 
     while True:
         time.sleep(60)
