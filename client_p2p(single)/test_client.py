@@ -7,6 +7,7 @@ import threading
 SERVER_IP = '10.0.0.145'
 SERVER_PORT = 4040
 # but client-client connection port is 4041
+P2P_PORT = 4041
 
 def console_print(message):
     now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -55,7 +56,9 @@ def server_connection():
                 pass
 
     p2p_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    p2p_socket.connect((osc_ip, 4041))
+    p2p_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    p2p_socket.bind(('', P2P_PORT))
+    p2p_socket.connect((osc_ip, P2P_PORT))
     threading.Thread(target=sock_send, args=(p2p_socket,)).start()
     threading.Thread(target=sock_recv, args=(p2p_socket,)).start()
 
