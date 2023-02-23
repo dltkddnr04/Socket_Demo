@@ -1,9 +1,10 @@
 import socket
 import datetime
 import json
+import time
 import threading
 
-SERVER_IP = ''
+SERVER_IP = '10.0.0.145'
 SERVER_PORT = 4040
 # but client-client connection port is 4041
 
@@ -43,23 +44,23 @@ def server_connection():
     }
     sock.sendall(json.dumps(data).encode())
 
-    data = sock.recv(1024)
-    if data:
-        osc_ip = None
-        while osc_ip is None:
+    osc_ip = None
+    while osc_ip is None:
+        data = sock.recv(1024)
+        if data:
             try:
                 processed_data = json.loads(data.decode())
                 osc_ip = processed_data[0]
             except:
                 pass
 
-        p2p_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        p2p_socket.connect((osc_ip, 4041))
-        while True:
-            message = input()
-            p2p_socket.sendall(message.encode())
-            threading.Thread(target=sock_recv, args=(p2p_socket,)).start()
-            threading.Thread(target=sock_send, args=(p2p_socket,)).start()
+    p2p_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    p2p_socket.connect((osc_ip, 4041))
+    threading.Thread(target=sock_send, args=(p2p_socket,)).start()
+    threading.Thread(target=sock_recv, args=(p2p_socket,)).start()
+
+    while True:
+        time.sleep(60)
 
 if __name__ == '__main__':
     server_connection()
