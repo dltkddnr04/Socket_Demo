@@ -1,4 +1,4 @@
-import socket
+from socket import *
 import datetime
 import json
 import time
@@ -37,7 +37,7 @@ def sock_recv(sock):
             break
 
 def server_connection():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket(AF_INET, SOCK_STREAM)
     sock.connect((SERVER_IP, SERVER_PORT))
     data = {
         'nick': 'nick',
@@ -55,8 +55,8 @@ def server_connection():
             except:
                 pass
 
-    p2p_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    p2p_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    p2p_socket = socket(AF_INET, SOCK_STREAM)
+    p2p_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     p2p_socket.bind(('', P2P_PORT))
     p2p_socket.connect((osc_ip, P2P_PORT))
     threading.Thread(target=sock_send, args=(p2p_socket,)).start()
