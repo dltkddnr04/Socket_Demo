@@ -45,8 +45,13 @@ def server_connection():
 
     data = sock.recv(1024)
     if data:
-        processed_data = json.loads(data.decode())
-        osc_ip = processed_data[0]
+        osc_ip = None
+        while osc_ip is None:
+            try:
+                processed_data = json.loads(data.decode())
+                osc_ip = processed_data[0]
+            except:
+                pass
 
         p2p_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         p2p_socket.connect((osc_ip, 4041))
